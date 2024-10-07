@@ -18,57 +18,42 @@ class ProductsService
         return $this->productRepository->all();
     }
 
-    public function createProducts(array $data)
+    public function createProduct(array $data)
     {
-
         if (isset($data['photo'])) {
-            $imagePath = $this->uploadPhoto($data['photo']);
-            $data['photo'] = $imagePath;
+            $data['photo'] = $this->uploadPhoto($data['photo']);
         }
 
         $product = $this->productRepository->create($data);
-
         $product->photo = asset('storage/' . $product->photo);
-
         return $product;
-
-
     }
 
-
-    public function updateProducts($id, array $data)
+    public function updateProduct($id, array $data)
     {
-        // Check if the product exists
         $product = $this->productRepository->find($id);
 
         if (!$product) {
             throw new \Exception('Product not found.');
         }
 
-        // If the photo is uploaded, upload it and update the path
         if (isset($data['photo'])) {
-            $imagePath = $this->uploadPhoto($data['photo']);
-            $data['photo'] = $imagePath; // Atualiza o caminho da nova imagem
+            $data['photo'] = $this->uploadPhoto($data['photo']);
         }
 
-        // Updates product data (including image path if updated)
-        $product->update($data);
+        $this->productRepository->update($id, $data);
 
-        // Returns the product with the full URL of the photo (either new or old)
-        $product->photo = url('storage/' . $product->photo);
-
-        return $product;
+        return (object) array_merge((array) $product, $data);
     }
 
 
 
-
-    public function getProductsById($id)
+    public function getProductById($id)
     {
         return $this->productRepository->find($id);
     }
 
-    public function deleteProducts($id)
+    public function deleteProduct($id)
     {
         $product = $this->productRepository->find($id);
         if (!$product) {
@@ -79,11 +64,7 @@ class ProductsService
 
     private function uploadPhoto($photo)
     {
-        // Save the image in the 'products' folder inside 'storage/app/public'
-        $path = $photo->store('products', 'public');
 
-        return $path;
+        return $photo->store('products', 'public');
     }
-
-
 }

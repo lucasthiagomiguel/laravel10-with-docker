@@ -24,27 +24,21 @@ class OrderRepository
 
     public function update($id, array $data)
     {
-        $Order = Order::findOrFail($id); // Use findOrFail to throw exception if not found
-        $Order->update($data);
-        return $Order;
+        $order = Order::find($id);
+        $order->update($data);
+        return $order;
     }
 
     public function delete($id)
     {
-        return Order::destroy($id);
+
+        $order = Order::find($id);
+        if ($order) {
+            return $order->delete();
+        }
+        return false;
     }
 
-    public function findOrderByNameById($name, $OrderId)
-    {
-        return Order::where('name', $name)
-        ->where('id', '!=', $OrderId) // Não considera o Ordere atual
-        ->exists();
-    }
 
-    public function findOrderByName($name)
-    {
-        return Order::where('name', $name)
-        ->exists();
-    }
 
 }

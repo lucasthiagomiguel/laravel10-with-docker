@@ -20,22 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/hello', function () {
-    return response()->json(['message' => 'Hello']);
-});
-
 
 
 Route::resource('clients', ClientController::class);
 Route::resource('products', ProductController::class);
 Route::resource('orders', OrderController::class);
-
-Route::put('/teste/{id}', function () {
-    return 'teste';
-});
-
-Route::post('/upload', [ProductController::class, 'update']);
-
-Route::middleware('api')->group(function () {
-    Route::post('/clients', [ClientController::class, 'store']);
-});
