@@ -21,18 +21,29 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install node and npm
 RUN apk add --no-cache nodejs npm
 
+# Cria um novo usuário
+RUN adduser -D appuser
+
 # Set working directory
 WORKDIR /var/www
 
 # Copy the project files to the container
 COPY . .
 
+RUN mkdir -p /var/www/storage/logs \
+    && chown -R www-data:www-data /var/www/storage \
+    && chmod -R 775 /var/www/storage
+# Configure as permissões do diretório antes de instalar as dependências
+RUN chown -R appuser:www-data /var/www && chmod -R 775 /var/www
+
+# Ajusta o timeout do Composer
+RUN composer config --global process-timeout 2000
+
 # Install Laravel dependencies via Composer
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
 
 # Generate Laravel application key
 RUN php artisan key:generate
-
 
 # Expose port 9000
 EXPOSE 9000

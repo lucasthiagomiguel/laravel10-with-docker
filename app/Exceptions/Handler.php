@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,6 +26,22 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        // Adicionando tratamento para exceções de validação
+        $this->renderable(function (ValidationException $e, $request) {
+            return response()->json([
+                'error' => 'Validation error',
+                'messages' => $e->validator->errors(),
+            ], 422);
+        });
+
+        // Adicionando tratamento para exceções genéricas
+        $this->renderable(function (Throwable $e, $request) {
+            return response()->json([
+                'error' => 'Ocorreu um erro',
+                'message' => $e->getMessage(),
+            ], 500);
         });
     }
 }
