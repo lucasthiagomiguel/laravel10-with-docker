@@ -9,3 +9,4 @@ done
 
 # Run migrations after the database is ready
 php artisan migrate --force
+php artisan db:seed

@@ -2,24 +2,102 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Mail\OrderConfirmation;
-use App\Models\Order;
-use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\Order\StoreOrderRequest;
+use App\Services\Order\OrderService;
+use App\Traits\ApiResponse;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
 
+    protected $orderService;
+    use ApiResponse; // Use the trait directly
+
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
+
+    public function index()
+    {
+        $orders = $this->orderService->getAllOrder();
+
+        return $this->respondWithNoContent($orders);
+
+    }
+
+    public function show($id)
+    {
+
+        try {
+            // Try create order
+            $order = $this->orderService->getOrderById($id);
+
+            return response()->json(['order' => $order], 200);
+        } catch (\Exception $e) {
+            
+            return response()->json(['error' => 'order not found'], 404);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 
 
-public function store(Request $request)
-{
-    $order = Order::create($request->all());
+    public function store(StoreOrderRequest $request)
+    {
 
-    // Enviar o e-mail
-    Mail::to($order->client->email)->send(new OrderConfirmation($order));
+        try {
+            // Try create client
 
-    return $order;
-}
+            $order = $this->orderService->createOrder($request->validated());
+
+
+            return response()->json([
+                'message' => 'Pedido criado com sucesso',
+                'order' => $order->load(['order', 'products']),
+            ], 201);
+        }   catch (ValidationException $e) {
+            return response()->json([
+                'error' => 'Erro de validação',
+                'messages' => $e->validator->errors(),
+            ], 422);
+        } catch (\Exception $e ) {
+            return response()->json([
+                'error' => 'Error creating order',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function update(StoreOrderRequest $request, $id)
+    {
+        try {
+            $order = $this->orderService->updateOrder($id, $request->validated());
+
+            return response()->json($order, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Order not found'], 404);
+        } catch ( \Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+
+        try {
+            // Try create client
+            $deleted = $this->orderService->deleteOrder($id);
+            return response()->json(['message' => 'Order deleted successfully'], 200);
+        } catch (\Exception $e) {
+            // Catch the ModelNotFoundException exception and return a friendly message
+             return response()->json(['error' => 'Order not found'], 404);
+         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+             // Catch any other unexpected exception and return a generic message
+             return response()->json(['error' => $e->getMessage()], 500);
+         }
+    }
+
 
 }

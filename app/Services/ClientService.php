@@ -26,14 +26,14 @@ class ClientService
 
     public function updateClient($id, array $data)
     {
-        // Verifica se o cliente existe
+
         $client = $this->clientRepository->find($id);
 
         if (!$client) {
             throw new \Exception('Client not found.');
         }
 
-        // Atualiza o cliente com os dados validados
+
         $client->update($data);
         return $client;
     }
@@ -41,6 +41,13 @@ class ClientService
 
     public function getClientById($id)
     {
+       
+        $client = $this->clientRepository->find($id);
+
+        if (!$client) {
+            throw new \Exception('Client not found.');
+        }
+
         return $this->clientRepository->find($id);
     }
 

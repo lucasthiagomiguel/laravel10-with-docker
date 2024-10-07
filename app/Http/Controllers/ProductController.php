@@ -56,10 +56,10 @@ class ProductController extends Controller
                 'products' => $products
             ], 201);
         } catch (QueryException $e) {
-            // Captura erros relacionados ao banco de dados
+
             return response()->json(['error' => 'Database error: ' . $e->getMessage()], 500);
         } catch (Exception $e) {
-            // Captura quaisquer outras exceções
+            
             return response()->json(['error' => $e->getMessage()], 500);
         }
 

@@ -13,7 +13,7 @@ class ClientRequest extends FormRequest
 
     public function rules()
     {
-        // Obtém o ID do cliente, se estiver presente na rota
+        
         $clientId = $this->route('client') ? $this->route('client') : $this->route('id');
 
         $rules = [

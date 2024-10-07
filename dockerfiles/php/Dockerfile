@@ -21,7 +21,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install node and npm
 RUN apk add --no-cache nodejs npm
 
-# Cria um novo usuário
+
 RUN adduser -D appuser
 
 # Set working directory
@@ -33,13 +33,15 @@ COPY . .
 RUN mkdir -p /var/www/storage/logs \
     && chown -R www-data:www-data /var/www/storage \
     && chmod -R 775 /var/www/storage
-# Configure as permissões do diretório antes de instalar as dependências
-RUN chown -R appuser:www-data /var/www && chmod -R 775 /var/www
 
-# Ajusta o timeout do Composer
+RUN chown -R appuser:www-data /var/www && chmod -R 775 /var/www
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+
 RUN composer config --global process-timeout 2000
 
-# Install Laravel dependencies via Composer
+
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader -vvv
 
 # Generate Laravel application key

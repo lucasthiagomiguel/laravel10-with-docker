@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 
-
-use Illuminate\Http\Request;
 use App\Http\Requests\ClientRequest\ClientRequest;
 use App\Services\ClientService;
 use App\Traits\ApiResponse;
-use Illuminate\Database\QueryException;
-use Exception;
 use Illuminate\Validation\ValidationException;
 
 class ClientController extends Controller
@@ -43,10 +39,10 @@ class ClientController extends Controller
 
             return response()->json(['client' => $client], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Captura a exceção ModelNotFoundException e retorna uma mensagem amigável
+            
             return response()->json(['error' => 'Client not found'], 404);
         } catch (\Exception $e) {
-            // Captura qualquer outra exceção inesperada e retorna uma mensagem genérica
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
