@@ -28,36 +28,29 @@ class OrderController extends Controller
 
     public function show($id)
     {
-
         try {
-            // Try create order
             $order = $this->orderService->getOrderById($id);
-
             return response()->json(['order' => $order], 200);
         } catch (\Exception $e) {
-            
-            return response()->json(['error' => 'order not found'], 404);
+            return response()->json(['error' => 'Order not found'], 404);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
 
+
     public function store(StoreOrderRequest $request)
     {
-
         try {
-            // Try create client
 
             $order = $this->orderService->createOrder($request->validated());
 
-
             return response()->json([
-                'message' => 'Pedido criado com sucesso',
-                'order' => $order->load(['order', 'products']),
+                'message' => 'Request created successfully',
+                'order' => $order->load(['client', 'products']),
             ], 201);
-        }   catch (ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'error' => 'Erro de validação',
                 'messages' => $e->validator->errors(),
@@ -69,6 +62,7 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
 
     public function update(StoreOrderRequest $request, $id)
     {
