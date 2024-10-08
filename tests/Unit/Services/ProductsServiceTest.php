@@ -54,7 +54,7 @@ class ProductsServiceTest extends TestCase
         $mockProduct->price = $data['price'];
         $mockProduct->photo = 'products/new_photo.jpg';
 
-       
+
         $this->productRepository->shouldReceive('create')->once()->with(Mockery::on(function ($arg) {
             return $arg['name'] === 'Product 1' && $arg['price'] === 10 && isset($arg['photo']);
         }))->andReturn($mockProduct);
@@ -164,4 +164,5 @@ class ProductsServiceTest extends TestCase
         $this->productRepository->shouldReceive('find')->once()->with($id)->andReturn(null);
 
         $this->productsService->deleteProduct($id);
+}
 }
