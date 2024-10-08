@@ -31,7 +31,7 @@ class ProductController extends Controller
 
         try {
             // Try create products
-            $products = $this->productsService->getproductsById($id);
+            $products = $this->productsService->getProductById($id);
             if($products == null){
                 return response()->json(['error' => 'products not found'], 404);
             }
@@ -50,7 +50,7 @@ class ProductController extends Controller
     {
         try {
             // Try create products
-            $products = $this->productsService->createproducts($request->validated());
+            $products = $this->productsService->createProduct($request->validated());
             return response()->json([
                 'message' => 'products created successfully!',
                 'products' => $products
@@ -59,7 +59,7 @@ class ProductController extends Controller
 
             return response()->json(['error' => 'Database error: ' . $e->getMessage()], 500);
         } catch (Exception $e) {
-            
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
@@ -70,7 +70,7 @@ class ProductController extends Controller
     public function update(ProductRequest $request, $id)
     {
         try {
-            $products = $this->productsService->updateproducts($id, $request->validated());
+            $products = $this->productsService->updateProduct($id, $request->validated());
 
             return response()->json([
                 'message' => 'products updated successfully!',
@@ -89,7 +89,7 @@ class ProductController extends Controller
 
         try {
             // Try create products
-            $this->productsService->deleteproducts($id);
+            $this->productsService->deleteProduct($id);
 
             return response()->json(['message' => 'products deleted successfully'], 200);
         } catch (\Exception $e) {

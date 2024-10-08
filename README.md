@@ -6,7 +6,7 @@ A product management system in PHP using Laravel, with features to create, updat
 
 - **PHP**: Programming language
 - **Laravel**: PHP framework
-- **MySQL**: Database management system
+- **Postgres**: Database management system
 - **Docker**: Container platform
 - **PHPUnit**: PHP automated testing framework
 
