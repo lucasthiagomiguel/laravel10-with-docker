@@ -81,18 +81,24 @@ class ProductRepositoryTest extends TestCase
     }
 
     /** @test */
-    public function it_can_delete_a_product()
+    public function it_can_soft_delete_a_product()
     {
-        // Arrange
+        // Arrange: Crie o produto antes de tentar deletar
         $product = Product::factory()->create();
 
-        // Act
+        // Act: Tente deletar (soft delete)
         $deletedCount = $this->productRepository->delete($product->id);
 
-        // Assert
+        // Assert: Verifique se a quantidade deletada foi 1
         $this->assertEquals(1, $deletedCount);
-        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+
+        // Assert: Verifique se o produto foi soft-deleted
+        $this->assertSoftDeleted('products', ['id' => $product->id]);
+
+        // Opcional: Verifique se ainda existe no banco de dados, mas com deleted_at preenchido
+        $this->assertDatabaseHas('products', ['id' => $product->id, 'deleted_at' => now()]);
     }
+
 
     /** @test */
     public function it_can_check_if_product_exists_by_name_and_different_id()

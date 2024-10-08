@@ -66,16 +66,20 @@ class OrderRepositoryTest extends TestCase
         $this->assertEquals('Updated Order Code', $updatedOrder->code);
     }
 
-    /** @test */
-    public function it_can_delete_order()
+   /** @test */
+    public function it_can_soft_delete_order()
     {
-        // Crie a ordem antes de tentar deletar
+
         $order = Order::factory()->create();
 
-        // Tente deletar
+
         $result = $this->orderRepository->delete($order->id);
 
-        // Verifique se a ordem foi deletada
-        $this->assertDatabaseMissing('orders', ['id' => $order->id]);
+
+        $this->assertSoftDeleted('orders', ['id' => $order->id]);
+
+
+        $this->assertDatabaseHas('orders', ['id' => $order->id, 'deleted_at' => now()]);
     }
+
 }

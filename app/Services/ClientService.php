@@ -41,7 +41,7 @@ class ClientService
 
     public function getClientById($id)
     {
-       
+
         $client = $this->clientRepository->find($id);
 
         if (!$client) {
@@ -53,6 +53,12 @@ class ClientService
 
     public function deleteClient($id)
     {
+        $client = $this->clientRepository->find($id);
+
+        if (!$client) {
+            throw new \Exception('Client not found.');
+        }
+
         return $this->clientRepository->delete($id);
     }
 }
