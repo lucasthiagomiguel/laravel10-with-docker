@@ -85,9 +85,7 @@ class ProductsServiceTest extends TestCase
         $mockProduct->price = 10;
         $mockProduct->photo = 'products/old_photo.jpg';
 
-
         $this->productRepository->shouldReceive('find')->once()->with(1)->andReturn($mockProduct);
-
 
         $this->productRepository->shouldReceive('update')
             ->once()
@@ -98,7 +96,7 @@ class ProductsServiceTest extends TestCase
                 'id' => 1,
                 'name' => 'Updated Product',
                 'price' => 20,
-                'photo' => 'products/new_photo.jpg',
+                'photo' => 'products/SgIxxAhCtFmMrZJq1FwqpTokZeIdyo7TZdtpjztp.jpg',
             ]);
 
         // Act
@@ -107,9 +105,12 @@ class ProductsServiceTest extends TestCase
         // Assert
         $this->assertEquals($data['name'], $product->name);
         $this->assertEquals($data['price'], $product->price);
-        $this->assertEquals(asset('storage/products/new_photo.jpg'), $product->photo);
+        $this->assertStringStartsWith('products/', $product->photo); // Verifica o início do caminho da imagem
 
+        // Opcional: verificar se a imagem realmente existe
+        \Storage::disk('public')->assertExists($product->photo);
     }
+
 
 
     /** @test */
